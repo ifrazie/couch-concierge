@@ -1,0 +1,27 @@
+*.iml
+*.swp
+.idea
+.DS_Store
+.vscode
+.tmp
+
+dist
+build
+node_modules
+CMakeUserPresets.json
+npm-debug.log
+
+# Local build metadata and cloud packaging artifacts
+buildinfo.json
+generated/
+.aws-sam/
+samconfig.toml
+coverage/
+*.zip
+
+# Credentials never belong in the public repository
+.env
+.env.*
+!.env.example
+*.pem
+*.key
