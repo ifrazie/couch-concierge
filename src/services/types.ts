@@ -2,9 +2,8 @@
  * Core domain types for Couch Concierge.
  *
  * These types define the contract between the UI, the content catalog, and the
- * "concierge" that composes an evening. The concierge is stubbed for now
- * (see ./concierge.ts) and will be backed by Amazon Bedrock in Week 3 — the
- * types below are exactly what that model must produce.
+ * concierge that composes an evening. The proxy returns title IDs; the client
+ * validates them and resolves media from its own catalog.
  */
 
 /** A coarse genre vocabulary shared by the catalog and taste profiles. */
@@ -63,6 +62,8 @@ export interface PlanItem {
 
 /** The concierge's full response for one request. */
 export interface EveningPlan {
+  /** Visible provenance: never present local recommendations as model output. */
+  source: 'bedrock' | 'local' | 'fallback';
   /** One-line framing of the whole evening. */
   summary: string;
   items: PlanItem[];
@@ -71,9 +72,7 @@ export interface EveningPlan {
 }
 
 /**
- * The single seam we swap at Week 3. `mockConcierge` implements this today;
- * `bedrockConcierge` will implement it against Amazon Bedrock with the same
- * signature, so no UI code changes.
+ * Shared seam for local and Bedrock-backed composition.
  */
 export interface Concierge {
   compose(request: EveningRequest): Promise<EveningPlan>;

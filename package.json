@@ -10,13 +10,15 @@
     "start": "react-native start",
     "test": "jest --colors ",
     "test:snapshot": "jest --colors --updateSnapshot",
+    "test:proxy": "npm --prefix proxy test",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src test package.json --ext .ts,.tsx",
     "lint:fix": "eslint src test package.json --ext .ts,.tsx --fix",
     "build:release": "react-native build-vega --build-type Release",
     "build:debug": "react-native build-vega --build-type Debug",
     "build:app": "npm-run-all build:release",
     "build": "npm-run-all build:release",
-    "release": "npm-run-all lint test build:app"
+    "release": "npm-run-all lint typecheck test test:proxy build:app"
   },
   "dependencies": {
     "@amazon-devices/react-native-kepler": "~4.0.0",

@@ -10,13 +10,11 @@ import {
 } from './types';
 
 /**
- * Local, deterministic stand-in for the Bedrock-backed concierge.
+ * Local, deterministic fallback for the Bedrock-backed concierge.
  *
  * It reconciles the selected viewers' tastes against the catalog and fits a
  * sequence of titles into the available time budget, producing human-readable
- * rationale for each pick. This exercises the whole UI (loading -> plan ->
- * playback) with zero AWS dependency. In Week 3 we add `bedrockConcierge`
- * implementing the same `Concierge` interface, and flip a single import.
+ * rationale for each pick, with zero AWS dependency.
  */
 
 const GENRE_MATCH_BONUS = 2;
@@ -84,16 +82,16 @@ const buildReason = (
   const fans = fansOf(item, profiles);
   const genreLabel = item.genres.filter((g) => g !== 'short').slice(0, 2).join(' + ');
   if (position === 0) {
-    return `Opening light with ${genreLabel} — a comfortable start ${joinNames(
+    return `Start with ${genreLabel} — a pick for ${joinNames(
       fans,
-    )} will both enjoy.`;
+    )}.`;
   }
-  return `${joinNames(fans)} lean toward ${genreLabel}, and at ${
+  return `A ${genreLabel} pick for ${joinNames(fans)}, and at ${
     item.durationMin
   } min it fits neatly in the time you have left.`;
 };
 
-/** Greedily fit the best-scoring items under the time budget, shortest-first. */
+/** Fit ranked items under the time budget, with at most three picks. */
 const fitPlan = (
   ranked: CatalogItem[],
   timeBudgetMin: number,
@@ -108,10 +106,15 @@ const fitPlan = (
     }
     if (chosen.length >= 3) break;
   }
-  // Guarantee at least one pick even for a tiny budget: take the shortest.
+  // If taste-matched films are too long, prefer a fitting catalog short rather
+  // than breaking the user's time budget.
   if (chosen.length === 0 && ranked.length > 0) {
-    const shortest = [...ranked].sort((a, b) => a.durationMin - b.durationMin)[0];
-    chosen.push({item: shortest, reason: buildReason(shortest, profiles, 0)});
+    const shortest = [...catalog]
+      .filter((item) => item.durationMin <= timeBudgetMin)
+      .sort((a, b) => a.durationMin - b.durationMin)[0];
+    if (shortest) {
+      chosen.push({item: shortest, reason: 'A quick catalog short that fits your time budget.'});
+    }
   }
   return chosen;
 };
@@ -128,15 +131,8 @@ const buildSummary = (
   return `${items.length} titles, ${totalMin} minutes total — paced for ${who}.`;
 };
 
-const delay = (ms: number) =>
-  new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
-
 export const mockConcierge: Concierge = {
   async compose(request: EveningRequest): Promise<EveningPlan> {
-    // Simulate the latency of a real model call so the loading UI is honest
-    // and the Bedrock swap in Week 3 needs no UI changes.
-    await delay(900);
-
     const {profiles, vibe, timeBudgetMin} = request;
     const likes = uniqueGenres(profiles, 'likes');
     const dislikes = uniqueGenres(profiles, 'dislikes');
@@ -154,6 +150,7 @@ export const mockConcierge: Concierge = {
     const totalMin = items.reduce((sum, p) => sum + p.item.durationMin, 0);
 
     return {
+      source: 'local',
       summary: buildSummary(profiles, items, totalMin),
       items,
       totalMin,

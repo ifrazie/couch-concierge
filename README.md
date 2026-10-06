@@ -25,7 +25,9 @@ From the repository root:
 ```bash
 npm ci
 npm run lint
+npm run typecheck
 npm test -- --runInBand
+npm run test:proxy
 npm run build:release
 ```
 
@@ -54,10 +56,12 @@ Deploy the Node.js proxy using [proxy/README.md](proxy/README.md). Lambda and it
 Bedrock client run in **us-east-2**. Set the resulting HTTPS Function URL in
 `src/config.ts`, then rebuild the app. AWS credentials stay in Lambda's IAM role.
 
-The model/inference-profile ID is a required deployment parameter. Claude 3.5
-Sonnet is no longer listed among the current Sonnet inference profiles returned
-by Bedrock in us-east-2 as of October 6, 2026. Select an available Sonnet profile
-at deployment; no replacement model is silently selected by this project.
+The approved model is **Claude Sonnet 4.5**, using
+`us.anthropic.claude-sonnet-4-5-20250929-v1:0`. The proxy is deployed and its live
+smoke check passed on October 6, 2026. `src/config.ts` points to that demo endpoint;
+set it to `''` for local-only recommendations or to your own deployed URL.
+The template model ID remains configurable. Claude 3.5 Sonnet is absent from
+the current Ohio Sonnet profile list, which is why the newer model was selected.
 US cross-region profiles can route inference outside us-east-2 even though the
 Lambda and originating Bedrock client use us-east-2.
 
@@ -80,9 +84,10 @@ Vega UI → Concierge interface → HTTPS POST → Lambda → Bedrock Converse
 - `proxy/`: reusable Node.js Bedrock adapter, server-side validation, tests,
   and deployable AWS SAM template.
 
-The backend supplies catalog IDs, never playable URLs. The app resolves IDs to
-its own catalog. Both boundaries reject unknown/duplicate titles and plans over
-the time budget. AI output is advisory: seeded genre preferences do not imply
+The backend computes feasible catalog schedules, then asks Bedrock to choose
+one and explain the trade-offs. It supplies catalog IDs, never playable URLs.
+The app resolves IDs to its own catalog and verifies the time sum. Both
+boundaries reject invalid selections. AI output is advisory: seeded genre preferences do not imply
 parental controls or verified age suitability.
 
 With no endpoint configured, the UI labels plans **Local demo**. If a configured
@@ -114,6 +119,13 @@ not claim those clips are public domain. Playback shows the supplied attribution
 include the applicable attribution and license links in the demo credits.
 
 ## Verification and submission
+
+The existing Vega/React Native dependency graph reports npm audit findings
+(33 high and 14 moderate with `--omit=dev` on October 6). The new proxy dependency
+graph reports zero findings. Root findings include tooling distributed within
+SDK dependencies; runtime reachability and a compatible SDK update still need
+review. A forced audit fix proposes an incompatible Vega dependency downgrade,
+so it was not applied. Review these before broader release.
 
 See [SUBMISSION.md](SUBMISSION.md) for the Devpost description, AWS integration
 write-up, demo outline, publishing steps, and live verification checklist.

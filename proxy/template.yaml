@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Couch Concierge catalog-grounded Bedrock proxy (deploy in us-east-2)
+
+Parameters:
+  ModelId:
+    Type: String
+    Default: us.anthropic.claude-sonnet-4-5-20250929-v1:0
+    MinLength: 1
+    Description: Available Claude model or US inference-profile ID supporting forced Converse tool use
+  BedrockResources:
+    Type: CommaDelimitedList
+    Description: Exact model ARNs plus inference-profile ARN and ALL destination model ARNs for cross-region profiles
+
+Rules:
+  OhioDeployment:
+    Assertions:
+      - Assert: !Equals [!Ref 'AWS::Region', us-east-2]
+        AssertDescription: Deploy this project in us-east-2.
+
+Resources:
+  ConciergeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: index.handler
+      Runtime: nodejs22.x
+      Architectures: [arm64]
+      MemorySize: 256
+      Timeout: 22
+      ReservedConcurrentExecutions: 2
+      Environment:
+        Variables:
+          BEDROCK_MODEL_ID: !Ref ModelId
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: bedrock:InvokeModel
+              Resource: !Ref BedrockResources
+  ConciergeUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt ConciergeFunction.Arn
+      AuthType: NONE
+      InvokeMode: BUFFERED
+  UrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ConciergeFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: '*'
+      FunctionUrlAuthType: NONE
+  UrlInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ConciergeFunction
+      Action: lambda:InvokeFunction
+      Principal: '*'
+      InvokedViaFunctionUrl: true
+
+Outputs:
+  Endpoint:
+    Value: !GetAtt ConciergeUrl.FunctionUrl
+  FunctionName:
+    Value: !Ref ConciergeFunction

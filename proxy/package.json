@@ -1,0 +1,23 @@
+{
+  "name": "couch-concierge-bedrock-proxy",
+  "version": "0.1.0",
+  "description": "Validated, catalog-grounded viewing plans using Bedrock Converse on AWS Lambda",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "files": [
+    "index.mjs",
+    "concierge.mjs",
+    "catalog.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "3.1146.0"
+  }
+}

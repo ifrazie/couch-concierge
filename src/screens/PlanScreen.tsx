@@ -3,7 +3,7 @@ import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-nativ
 import {ScreenContainer} from '../components/ScreenContainer';
 import {PlanItemCard} from '../components/PlanItemCard';
 import {FocusableButton} from '../components/FocusableButton';
-import {mockConcierge} from '../services/mockConcierge';
+import {concierge} from '../services/concierge';
 import {EveningPlan} from '../services/types';
 import {colors, spacing, type} from '../theme/theme';
 import {Navigation, Route} from '../navigation/types';
@@ -13,32 +13,46 @@ interface Props {
   navigation: Navigation;
 }
 
+const sourceLabels: Record<EveningPlan['source'], string> = {
+  bedrock: 'Amazon Bedrock',
+  fallback: 'Local fallback',
+  local: 'Local demo',
+};
+
 /**
  * Asks the concierge to compose an evening for the request, shows an honest
- * loading state during the (currently mocked) model call, then renders the
+ * loading state during composition, then renders the
  * sequenced plan with its rationale.
  */
 export const PlanScreen = ({route, navigation}: Props) => {
   const [plan, setPlan] = useState<EveningPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
     setPlan(null);
     setError(null);
-    mockConcierge
+    concierge
       .compose(route.request)
       .then((result) => active && setPlan(result))
       .catch(() => active && setError('Could not compose an evening. Try again.'));
     return () => {
       active = false;
     };
-  }, [route.request]);
+  }, [route.request, attempt]);
 
   if (error) {
     return (
       <ScreenContainer title="Hmm." navigation={navigation} showBack>
         <Text style={styles.message}>{error}</Text>
+        <FocusableButton
+          label="Try again"
+          primary
+          hasTVPreferredFocus
+          onPress={() => setAttempt((value) => value + 1)}
+          testID="btn-retry-plan"
+        />
       </ScreenContainer>
     );
   }
@@ -66,6 +80,16 @@ export const PlanScreen = ({route, navigation}: Props) => {
       subtitle={plan.summary}
       navigation={navigation}
       showBack>
+      <View style={styles.provenance}>
+        <Text style={styles.source}>{sourceLabels[plan.source]}</Text>
+        {plan.source !== 'bedrock' ? (
+          <Text style={styles.note}>
+            {plan.source === 'fallback'
+              ? 'AI unavailable — showing local recommendations. Try another plan to reconnect.'
+              : 'Configure the AWS endpoint to enable AI recommendations.'}
+          </Text>
+        ) : null}
+      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         {plan.items.map((planItem, i) => (
           <PlanItemCard
@@ -81,7 +105,12 @@ export const PlanScreen = ({route, navigation}: Props) => {
       <View style={styles.footer}>
         <Text style={styles.total}>{`${plan.totalMin} min total`}</Text>
         <FocusableButton
-          label="Start from the top"
+          label="Try another plan"
+          onPress={() => setAttempt((value) => value + 1)}
+          testID="btn-recompose-plan"
+        />
+        <FocusableButton
+          label="Play first title"
           primary
           onPress={() =>
             navigation.navigate({name: 'player', item: plan.items[0].item})
@@ -94,6 +123,18 @@ export const PlanScreen = ({route, navigation}: Props) => {
 };
 
 const styles = StyleSheet.create({
+  provenance: {
+    marginBottom: spacing.md,
+  },
+  source: {
+    ...type.label,
+    color: colors.accent,
+  },
+  note: {
+    ...type.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
   loading: {
     flex: 1,
     alignItems: 'center',

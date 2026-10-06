@@ -1,0 +1,51 @@
+[
+  {
+    "id": "big-buck-bunny",
+    "title": "Big Buck Bunny",
+    "synopsis": "A gentle giant rabbit turns the tables on three bullying rodents in this sunny, slapstick animated short.",
+    "genres": ["comedy", "family", "animation", "short"],
+    "durationMin": 10
+  },
+  {
+    "id": "sintel",
+    "title": "Sintel",
+    "synopsis": "A lone warrior searches for the dragon she once befriended, in a sweeping, melancholy fantasy quest.",
+    "genres": ["fantasy", "drama", "adventure", "animation"],
+    "durationMin": 15
+  },
+  {
+    "id": "tears-of-steel",
+    "title": "Tears of Steel",
+    "synopsis": "In a ruined future Amsterdam, a band of warriors and scientists gamble on a memory to save the world from robots.",
+    "genres": ["sci-fi", "action", "drama"],
+    "durationMin": 12
+  },
+  {
+    "id": "elephants-dream",
+    "title": "Elephants Dream",
+    "synopsis": "Two men wander a vast, shifting machine-world, arguing over what is real in this surreal animated first.",
+    "genres": ["sci-fi", "drama", "animation"],
+    "durationMin": 11
+  },
+  {
+    "id": "for-bigger-blazes",
+    "title": "For Bigger Blazes",
+    "synopsis": "A punchy one-minute showcase of big-screen action — perfect as a warm-up or a palate cleanser.",
+    "genres": ["action", "short"],
+    "durationMin": 1
+  },
+  {
+    "id": "for-bigger-fun",
+    "title": "For Bigger Fun",
+    "synopsis": "A bright, upbeat short built for grins — quick, light, and easy to drop into any evening.",
+    "genres": ["comedy", "family", "short"],
+    "durationMin": 1
+  },
+  {
+    "id": "for-bigger-escapes",
+    "title": "For Bigger Escapes",
+    "synopsis": "A breezy getaway short — a little adventure and a lot of scenery in under a minute.",
+    "genres": ["adventure", "family", "short"],
+    "durationMin": 1
+  }
+]

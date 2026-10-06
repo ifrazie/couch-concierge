@@ -1,0 +1,8 @@
+{
+  "profiles": [
+    {"id": "sam", "name": "Sam", "likes": ["comedy", "family", "animation"], "dislikes": ["sci-fi"]},
+    {"id": "riley", "name": "Riley", "likes": ["sci-fi", "action", "adventure"], "dislikes": ["documentary"]}
+  ],
+  "vibe": "Something upbeat that balances both our tastes before dinner",
+  "timeBudgetMin": 20
+}

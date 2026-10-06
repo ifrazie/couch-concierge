@@ -13,6 +13,16 @@ const requestFor = (
 });
 
 describe('mockConcierge', () => {
+  it('respects a tiny budget even when the preferred genres only match longer films', async () => {
+    const plan = await mockConcierge.compose({
+      profiles: [{id: 'drama', name: 'Drama fan', avatar: 'D', likes: ['drama'], dislikes: []}],
+      vibe: 'moving drama',
+      timeBudgetMin: 1,
+    });
+    expect(plan.items.length).toBeGreaterThan(0);
+    expect(plan.totalMin).toBeLessThanOrEqual(1);
+  });
+
   it('fits the plan within the time budget', async () => {
     const plan = await mockConcierge.compose(
       requestFor(['sam', 'leo'], 'something funny', 40),
