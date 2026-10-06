@@ -107,6 +107,24 @@ deployed latency benchmarking, and CORS failures are not claimed.
 
 ## Add a real device/cloud entry after testing
 
+### Simulator connection did not persist until installation
+
+- **Task:** install the Release app on a Vega Virtual Device.
+- **Steps:** started the default GUI virtual device, observed it in
+  `vega device list`, then attempted release installation from the next command.
+- **Expected:** the booted simulator stays connected for installation.
+- **Actual:** installation reported device not found; a follow-up device list
+  was empty. This happened before any application could be installed.
+- **Severity:** Important — blocked native verification after a successful boot.
+- **Workaround/status:** launched with `setsid vega virtual-device start`;
+  the simulator remained connected across later commands. Used single-device
+  auto-selection for install/launch. Installation succeeded and the CLI confirmed
+  the app running. The initial shutdown's exact cause was not independently proven.
+- **Actionable suggestion:** clarify launcher process-lifetime behavior for agent
+  shells and distinguish displayed guest identity from VDA transport identifiers.
+- **Target:** x86_64 Vega Virtual Device, SDK 0.24.12044. Playback and full native
+  interaction testing remain pending.
+
 For each new observation record: task; exact steps; expected outcome; actual
 outcome; severity; workaround; actionable suggestion. Keep credentials, account
 identifiers, personal data, and token-bearing URLs out of the submission log.

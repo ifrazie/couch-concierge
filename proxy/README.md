@@ -2,7 +2,9 @@
 
 A standalone, MIT-licensed Node.js adapter that turns household tastes, mood, and
 a time budget into a **catalog-grounded** viewing plan using Bedrock Converse.
-It can be published separately as an additional open-source integration project.
+Published as an additional open-source integration project at
+https://github.com/ifrazie/couch-concierge-bedrock-proxy.
+The companion Vega app is https://github.com/ifrazie/couch-concierge.
 No Vega SDK is required to build or test this component.
 
 ## What it does

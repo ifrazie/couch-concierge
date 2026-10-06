@@ -2,6 +2,9 @@
 
 **One couch. Different tastes. An evening that fits.**
 
+[App repository](https://github.com/ifrazie/couch-concierge) ·
+[Standalone open-source proxy](https://github.com/ifrazie/couch-concierge-bedrock-proxy)
+
 A React Native for Vega Fire TV app that turns a household's viewing preferences,
 a mood, and a time budget into a short, explained viewing plan. Pick the viewers,
 choose a vibe, review the recommendations, and play a title with Vega's native
@@ -43,6 +46,9 @@ vega device is-app-running --appName com.myorg.VegaProject.main
 ```
 
 Use `--device <serial>` for install/launch when more than one device is connected.
+For a single connected simulator, use the auto-selection commands above. In this
+session the Linux simulator was **x86_64**; check the actual target architecture
+rather than assuming every virtual device is aarch64.
 The package identifier is `com.myorg.VegaProject`; the displayed name is
 **Couch Concierge**. A standard web or mobile emulator is not a Fire TV demo.
 
@@ -131,6 +137,12 @@ See [SUBMISSION.md](SUBMISSION.md) for the Devpost description, AWS integration
 write-up, demo outline, publishing steps, and live verification checklist.
 [FRICTION_LOG.md](FRICTION_LOG.md) records observed tool friction rather than
 invented cloud or device testing results.
+
+The Release app was installed and confirmed running on the Vega simulator
+(SDK 0.24.12044). Full native navigation/playback testing and demo recording
+remain pending. When starting from a short-lived agent command session, launching
+with `setsid vega virtual-device start` kept the simulator connected across
+subsequent commands in this session.
 
 Sources:
 

@@ -16,17 +16,18 @@ reviewed October 6, 2026. Re-check the rules before submitting.
 - [x] Run the deployed proxy smoke check and validate a real Bedrock response.
 - [ ] Observe **Amazon Bedrock** in the native app on the target device.
   Local demo/fallback is not evidence of AWS inference.
-- [ ] Install/launch on a Vega simulator or actual Fire TV; verify D-pad focus,
-  viewer selection, on-screen keyboard/quick picks, scrolling, playback,
+- [x] Install and launch the Release app on the Vega x86_64 simulator;
+  CLI confirms `com.myorg.VegaProject.main` is running.
+- [ ] Verify D-pad focus, viewer selection, on-screen keyboard/quick picks, scrolling, playback,
   play/pause, and return-to-plan. Unit tests do not verify these native paths.
 - [ ] Resolve or assess the W3C media package compatibility-metadata diagnostic
   from the release build against the target device/SDK.
 - [ ] Review inherited Vega/RN dependency audit findings and compatible fixes;
   `npm audit --omit=dev` reported 33 high / 14 moderate issues. The proxy audit
   reported zero. Do not force an SDK downgrade to satisfy npm's suggested fix.
-- [ ] Publish the main repository with the MIT license visible on GitHub.
-- [ ] Publish a meaningful **additional** open-source project/contribution
-  (the standalone proxy is prepared) during the submission window.
+- [x] Publish the main repository with the MIT license visible on GitHub.
+- [x] Publish the additional standalone proxy project during the submission
+  window; GitHub reports both repositories PUBLIC with the MIT license.
 - [ ] Verify video/poster/music rights and required credits, especially the
   Google sample clips; public hosting is not itself a content license.
 - [ ] Record a public English YouTube/Vimeo video **under 3 minutes**, showing
@@ -54,11 +55,13 @@ reviewed October 6, 2026. Re-check the rules before submitting.
 | Live AWS inference | Sonnet 4.5 succeeded with IAM; deployed proxy smoke passed with three titles / 12 minutes for a 20-minute budget |
 | Live Function URL input validation | Verified 405, 400, 415, and 413 responses without model calls |
 | CloudFormation deployment | `couch-concierge` stack reached CREATE_COMPLETE in us-east-2 |
+| Native installation/launch | Release package installed on x86_64 Vega Virtual Device; CLI confirmed app running; SDK 0.24.12044 |
+| GitHub publication | App and additional proxy repositories are PUBLIC; GitHub detects MIT in both |
 | Device playback / public video | Not yet verified |
 
 The configured endpoint now points to the live Sonnet 4.5 demo proxy. Set it to
-`''` for local-only recommendations. GitHub publication and the platform demo
-are still outstanding.
+`''` for local-only recommendations. Native functional testing and the public
+platform demo video are still outstanding.
 
 ## Project description draft
 
@@ -152,10 +155,11 @@ lockfile, docs, tests, SAM template, and live-check script; publish it as an
 additional integration project or submit it as a meaningful contribution to an
 appropriate public repository.
 
-- Project repository URL: **PENDING**
-- Contribution / additional proxy repository URL: **PENDING**
-- GitHub username: **PENDING — confirm submission owner**
-- Contribution date/link to commit, branch, fork, or PR: **PENDING**
+- Project repository URL: https://github.com/ifrazie/couch-concierge
+- Additional proxy repository URL: https://github.com/ifrazie/couch-concierge-bedrock-proxy
+- GitHub username: **ifrazie** (approved publication account)
+- Contribution date: **October 6, 2026**, within the submission window.
+- Contribution URL: https://github.com/ifrazie/couch-concierge-bedrock-proxy/commit/2adee3a8def0fc86f785912a4e42db4893ca967a
 
 Contribution description draft:
 
@@ -165,26 +169,26 @@ Contribution description draft:
 > a standalone SAM deployment, and a live smoke check. Other developers can
 > replace the trusted catalog or reuse the handler factory without a Vega SDK.
 
-Publication instructions (run once you approve the final changes and names):
+Publication completed. For future updates, commit the app changes and regenerate
+the standalone proxy branch when files under `proxy/` change:
 
 ```bash
 git status
 git diff
-git add package.json src/config.ts src/services src/screens/PlanScreen.tsx test proxy \
-  README.md SUBMISSION.md FRICTION_LOG.md
+# Stage only the intended changes, then review them before committing:
+git add proxy README.md SUBMISSION.md FRICTION_LOG.md
 git diff --cached
-git commit -m "feat: integrate validated Bedrock viewing plans"
-gh repo create couch-concierge --public --source . --remote origin --push
+git commit -m "docs: update deployment and submission evidence"
+git push origin main
 
 # Produce a separately publishable proxy history without copying node_modules:
 git subtree split --prefix=proxy --branch proxy-open-source
-gh repo create couch-concierge-bedrock-proxy --public
-git push https://github.com/YOUR_USERNAME/couch-concierge-bedrock-proxy.git \
+git push https://github.com/ifrazie/couch-concierge-bedrock-proxy.git \
   proxy-open-source:main
 ```
 
-Choose unused repo names and replace `YOUR_USERNAME`. Keep the main app's
-`proxy/` copy available so judges can reproduce the whole project. Include a
+Keep the main app's `proxy/` copy available so judges can reproduce the whole
+project. Include a
 direct contribution URL and the reason the additional project helps other
 developers. For a public submission, private collaborator invitations are not
 required.
@@ -206,7 +210,8 @@ the AWS portion after a successful call. Do not dub simulated output over a
 local plan. Leave room below three minutes for titles and credits.
 
 - Public YouTube/Vimeo URL: **PENDING**
-- Device/simulator and software version: **PENDING**
+- Installed target: **Vega Virtual Device, x86_64, SDK 0.24.12044**.
+- Recorded demo device/version: **PENDING — fill when recording**.
 
 ## Product feedback worksheet
 
@@ -216,7 +221,7 @@ verified; native playback has not yet been verified. Complete first-person onboa
 
 | Tool / API / SDK | Used for / worked well | Needs work / observed friction | Onboarding / use again |
 | --- | --- | --- | --- |
-| Vega SDK / RN for Vega 0.83 | Three release architectures were packaged; manifest validation passed; TV focus primitives and typed UI available | W3C media `2.3.4-rn-83` reports a compatibility mapping error despite the command exiting successfully | **PENDING:** document initial setup and target-device verification; answer Yes/No and why |
+| Vega SDK / RN for Vega 0.83 | Three release architectures were packaged; manifest validation passed; Release app installed and running on the simulator | W3C media `2.3.4-rn-83` reports a compatibility mapping error despite the command exiting successfully; simulator initially disconnected before install | **PENDING:** full UI/playback testing, first-person onboarding, and Yes/No reuse decision |
 | Vega W3C media | Existing player uses the native surface and lifecycle API | Published prerelease version absent from its own compatibility map; real playback still needs device verification | **PENDING:** measure actual initialization, playback, cleanup; answer Yes/No |
 | Amazon Devices Builder Tools MCP / Agent Skills | Documentation search, RN-version guidance, networking and build guidance informed implementation | Some CLI reference guidance describes older SDK/RN generations; version-specific checks remain necessary | **PENDING:** describe your onboarding and whether the guidance accelerated work |
 | React / TypeScript / Jest / React Native Testing Library | App tests cover grounding, timeout, fallback, budget regression, and retry UI | Native media is mocked in Jest; passing tests cannot establish simulator/device playback | **PENDING:** summarize your workflow and reuse decision |
